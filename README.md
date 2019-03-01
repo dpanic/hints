@@ -341,3 +341,46 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 launchctl unload /Library/LaunchDaemons/limit.maxproc.plist
 launchctl load -w /Library/LaunchDaemons/limit.maxproc.plist
 ```
+
+
+## Enable ramdisk (MacOS):
+
+```
+#!/bin/bash
+
+echo '#!/bin/sh' > /var/root/ramfs.sh
+echo '#!/bin/bash
+NAME="ramdisk"
+while [ ! -d /Volumes ]
+do
+    echo "waiting..."
+    sleep 2
+done
+if [ ! -d /Volumes/$NAME ]; then
+    echo "creating ramdisk..."
+    diskutil erasevolume HFS+ $NAME `hdiutil attach -nomount ram://3145728`
+fi' >> /var/root/ramfs.sh
+
+
+chmod +x /var/root/ramfs.sh
+
+rm -rf '/Library/LaunchDaemons/com.ramdisk.plist'
+echo '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Label</key>
+        <string>com.ramdisk</string>
+        <key>ProgramArguments</key>
+        <array>
+          <string>/bin/sh</string>
+          <string>/var/root/ramfs.sh</string>
+        </array>
+        <key>RunAtLoad</key>
+          <true/>
+        <key>KeepAlive</key>
+          <true/>
+    </dict>
+</plist>' >> '/Library/LaunchDaemons/com.ramdisk.plist'
+launchctl load /Library/LaunchDaemons/com.ramdisk.plist
+```
