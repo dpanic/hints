@@ -166,7 +166,7 @@ echo "session required pam_limits.so" >> /etc/pam.d/common-session
 echo "session required pam_limits.so" >> /etc/pam.d/common-session-noninteractive
 ```
 
-## MySQL speed tunnings
+## MySQL server tunnings
 I have tuned MySQL server with this tool https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl which will give you some cool advices. But here is /etc/mysql/mysql.conf.d/mysql.conf:
 
 ```
@@ -246,7 +246,7 @@ def dns_check(self, hostname):
 If run in paralell, with multiple threads. This can generate relativelly big server load, because of lots of context switches caused by subprocess.Popen. Better use pure sockets and perform raw dns request or use library which is doing it that way. There are DoH (DNS over HTTPS) these days, so you can perform HTTP request in order to get DNS responses from resolvers.
 
 
-## SRE of MySQL
+## SRE: MySQL server
 When having db with lots of inserts and deletes, index files, table files are constantly growing. In order to shrink database you can do this every N days:
 
 ```
@@ -254,21 +254,12 @@ $ mysqlcheck -u root --password=[REDACTED] -o --all-databases
 ```
 
 ## MySQL utf8mb4
-MySQL use utf8mb4 over utf8 encdoing. Reference: https://medium.com/@adamhooper/in-mysql-never-use-utf8-use-utf8mb4-11761243e434
+MySQL use utf8mb4 over utf8 encoding. Reference: https://medium.com/@adamhooper/in-mysql-never-use-utf8-use-utf8mb4-11761243e434
 ​
 
 
 ## SRE: Force caching of files on disk
 If you have system similar to Amazon's Lambda, something which is constantly starting/stopping some code, or you have Web Application which you want to make highly available, reducing disk reads. You may force it (from time to time) to re-read, cache whole source code. Example: /usr/bin/vmtouch ; Reference: https://hoytech.com/vmtouch/ 
-
-
-
-## Limit open files (MacOS) tunnings
-Todo: implement
-
-## Limit max processes (MacOS) tunnings
-Todo: implement
-
 
 
 ## Fail2Ban to the rescue 
@@ -285,3 +276,11 @@ sender = fail2ban@master.0point.co
 mta = sendmail
 action = %(action_mwl)s
 ```
+
+
+
+## Limit open files (MacOS) tunnings
+Todo: implement
+
+## Limit max processes (MacOS) tunnings
+Todo: implement
