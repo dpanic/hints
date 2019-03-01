@@ -6,18 +6,40 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 1. [How to fix (create) zombie process](#section1)
 2. [PHP-FPM long-run is expensive on CPU](#section2)
 3. [Dirty Python](#section3)
+4. [Regex vs split/explode](#section4)
+5. [Chrome Headless creates huge server load](#section5)
+6. [sysctl.conf for high server throughput](#section6)
+7. [Limit open files (Linux) tunnings](#section7)
+8. [MySQL server tunnings](#section8)
+9. [Forking is expensive](#section9)
+10. [SRE: MySQL server](#section10)
+11. [MySQL utf8mb4](#section11)
+12. [SRE: Force caching of files on disk](#section12)
+13. [Fail2Ban to the rescue](#section13)
+14. [Limit open files (MacOS) tunnings](#section14)
+15. [Limit max processes (MacOS) tunnings](#section15)
+16. [Enable ramdisk (MacOS)](#section16)
 
 
 
+<a name="section1"></a>
 
-## How to fix (create) zombie process <a name="section1"></a>
+## How to fix (create) zombie process 
 Zombie process is process which is finished, but not removed from process table.
 One can create zombie process by following scenario. Parent process forks child process. During it's runtime, parent process dies leaving children process which becomes zombie.
 
-## PHP-FPM long-run is expensive on CPU <a name="section2"></a>
+
+
+<a name="section2"></a>
+
+## PHP-FPM long-run is expensive on CPU 
 If you design PHP-FPM to do long running requests, you will end up in big server load. PHP is scripting language designed for quick and short responses, not long running ones. To be more precise if you setup PHP-FPM with 20 processes, and you have 20 long running processes your PHP-FPM will be stuck for other requests. Your service should be designed to accept request, enqueue it, give you request id, and kindly ask you to visit it later for results; or push you results when they're finished.
 
-## Dirty Python <a name="section2"></a>
+
+
+<a name="section3"></a>
+
+## Dirty Python 
 If you want to archive speed in Python. You can access/check dictionary key by direct memory access. Example:
 ```
 d = {
@@ -35,6 +57,7 @@ except:
 print('key is_found = %s' %(is_found))
 ```
 
+<a name="section4"></a>
 
 ## Regex vs split/explode
 Sometimes is regex very convinient. Eg. parsing email in submited email form, parsing telephone number in submited form etc. Regexes are implemented as [finite state machine](https://en.wikipedia.org/wiki/Finite-state_machine), and that is why they are not super fast. Usually it is more convinient to do something like this:
@@ -48,6 +71,9 @@ except:
 Than XML DOM parsing or similar.
 
 
+
+<a name="section5"></a>
+
 ## Chrome Headless creates huge server load
 Context switching is expensive, use kernel-lowlatency. Test case can be https://www.telegraf.rs or any similar website which is consuming lots of GPU.
 ```
@@ -59,7 +85,10 @@ Or preferably you can setup /tmp for using ramdisk by adding it in /etc/fstab:
 tmpfs /tmp tmpfs defaults,mode=1777,size=2048M 0 0
 ```
 
-## sysctl.conf high throughput
+
+<a name="section6"></a>
+
+## sysctl.conf for high server throughput
 Here are server tunings which I use:
 ```
 # Increase size of file handles and inode cache
@@ -152,6 +181,9 @@ After saving run following command:
 $ sysctl -p
 ```
 
+
+<a name="section7"></a>
+
 ## Limit open files (Linux) tunnings
 Raising limits in Linux works like this.
 Edit /etc/security/limits.conf:
@@ -172,6 +204,9 @@ root      hard    nproc       1024
 echo "session required pam_limits.so" >> /etc/pam.d/common-session
 echo "session required pam_limits.so" >> /etc/pam.d/common-session-noninteractive
 ```
+
+
+<a name="section8"></a>
 
 ## MySQL server tunnings
 I have tuned MySQL server with this tool https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl which will give you some cool advices. But here is /etc/mysql/mysql.conf.d/mysql.conf:
@@ -232,6 +267,9 @@ innodb_log_buffer_size = 8M
 sync_binlog = 1
 ```
 
+
+<a name="section9"></a>
+
 ## Forking is expensive
 When doing any kind of forking, creating new process. That is very expensive operation, because due to context switches. For example if you take following Python code:
 
@@ -253,6 +291,9 @@ def dns_check(self, hostname):
 If run in paralell, with multiple threads. This can generate relativelly big server load, because of lots of context switches caused by subprocess.Popen. Better use pure sockets and perform raw dns request or use library which is doing it that way. There are DoH (DNS over HTTPS) these days, so you can perform HTTP request in order to get DNS responses from resolvers.
 
 
+
+<a name="section10"></a>
+
 ## SRE: MySQL server
 When having db with lots of inserts and deletes, index files, table files are constantly growing. In order to shrink database you can do this every N days:
 
@@ -260,14 +301,21 @@ When having db with lots of inserts and deletes, index files, table files are co
 $ mysqlcheck -u root --password=[REDACTED] -o --all-databases
 ```
 
+<a name="section11"></a>
+
 ## MySQL utf8mb4
 MySQL use utf8mb4 over utf8 encoding. Reference: https://medium.com/@adamhooper/in-mysql-never-use-utf8-use-utf8mb4-11761243e434
 ​
 
 
+<a name="section12"></a>
+
 ## SRE: Force caching of files on disk
 If you have system similar to Amazon's Lambda, something which is constantly starting/stopping some code, or you have Web Application which you want to make highly available, reducing disk reads. You may force it (from time to time) to re-read, cache whole source code. Example: /usr/bin/vmtouch ; Reference: https://hoytech.com/vmtouch/ 
 
+
+
+<a name="section13"></a>
 
 ## Fail2Ban to the rescue 
 Sometimes is cool to setup fail2ban rule for SSH to ban after 3 failed requests, email you about that and block that bot/person for 86400 seconds. However, as fail2ban knows how to read logs, it can be configured for analyzing abusive 403, 401, 50X, 30X requests on web server...
@@ -285,6 +333,7 @@ action = %(action_mwl)s
 ```
 
 
+<a name="section14"></a>
 
 ## Limit open files (MacOS) tunnings
 
@@ -318,6 +367,9 @@ launchctl unload /Library/LaunchDaemons/limit.maxfiles.plist
 launchctl load -w /Library/LaunchDaemons/limit.maxfiles.plist
 ```
 
+
+<a name="section15"></a>
+
 ## Limit max processes (MacOS) tunnings
 Execute following script:
 
@@ -349,6 +401,9 @@ launchctl unload /Library/LaunchDaemons/limit.maxproc.plist
 launchctl load -w /Library/LaunchDaemons/limit.maxproc.plist
 ```
 
+
+
+<a name="section16"></a>
 
 ## Enable ramdisk (MacOS):
 
