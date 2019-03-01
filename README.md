@@ -272,7 +272,7 @@ Sometimes is cool to setup fail2ban rule for SSH to ban after 3 failed requests,
 findtime = 600
 maxretry = 5
 destemail = dpanic@gmail.com
-sender = fail2ban@master.0point.co
+sender = dpanic.fail2ban@gmail.com
 mta = sendmail
 action = %(action_mwl)s
 ```
