@@ -3,7 +3,7 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 
 
 # Table of Contents
-1. [How to fix (create) zombie process](#section1)
+1. [How to detect zombie process](#section1)
 2. [PHP-FPM long-run is expensive on CPU](#section2)
 3. [Dirty Python](#section3)
 4. [Regex vs split/explode](#section4)
@@ -19,14 +19,14 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 14. [Limit open files (MacOS) tunnings](#section14)
 15. [Limit max processes (MacOS) tunnings](#section15)
 16. [Enable ramdisk (MacOS)](#section16)
-
+17. [Limit cpu resources per process](#section17)
 
 
 <a name="section1"></a>
 
-## How to fix (create) zombie process 
+## How to detect zombie process 
 Zombie process is process which is finished, but not removed from process table.
-One can create zombie process by following scenario. Parent process forks child process. During it's runtime, parent process dies leaving children process which becomes zombie.
+One can create zombie process by following scenario. Parent process forks child process. During it's runtime, parent process dies leaving children process which becomes zombie. So
 
 
 
@@ -446,3 +446,12 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </plist>' >> '/Library/LaunchDaemons/com.ramdisk.plist'
 launchctl load /Library/LaunchDaemons/com.ramdisk.plist
 ```
+
+(#section17)
+## Limit cpu resources per process
+One can limit how many CPU resources are consumed by it's cpu on multiple ways. By using simple:
+[cputool](https://gitlab.devlabs.linuxassist.net/cputool/cputool) by example ```/usr/bin/cputool -c 60 --``` or by using more robust **cgroups**.
+- Reference 1: http://man7.org/linux/man-pages/man7/cgroups.7.html
+- Reference 2: https://www.digitalocean.com/community/tutorials/how-to-limit-resources-using-cgroups-on-centos-6
+
+Problem with cputool as it is hacky way, sending to the process following signals SIGSTOP and SIGCONT. 
