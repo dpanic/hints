@@ -447,11 +447,12 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 launchctl load /Library/LaunchDaemons/com.ramdisk.plist
 ```
 
-(#section17)
+<a name="section17"></a>
+
 ## Limit cpu resources per process
 One can limit how many CPU resources are consumed by it's cpu on multiple ways. By using simple:
 [cputool](https://gitlab.devlabs.linuxassist.net/cputool/cputool) by example ```/usr/bin/cputool -c 60 --``` or by using more robust **cgroups**.
 - Reference 1: http://man7.org/linux/man-pages/man7/cgroups.7.html
 - Reference 2: https://www.digitalocean.com/community/tutorials/how-to-limit-resources-using-cgroups-on-centos-6
 
-Problem with cputool as it is hacky way, sending to the process following signals SIGSTOP and SIGCONT. 
+Problem with cputool as it works in a hacky way. It works by sending SIGSTOP and SIGCONT to the targeted process.
