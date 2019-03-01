@@ -280,7 +280,64 @@ action = %(action_mwl)s
 
 
 ## Limit open files (MacOS) tunnings
-Todo: implement
+
+Execute following script:
+```
+#!/bin/bash
+
+rm -rf '/Library/LaunchDaemons/limit.maxfiles.plist'
+echo '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+        "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>limit.maxfiles</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>launchctl</string>
+      <string>limit</string>
+      <string>maxfiles</string>
+      <string>524288</string>
+      <string>524288</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>ServiceIPC</key>
+    <false/>
+  </dict>
+</plist>' >> '/Library/LaunchDaemons/limit.maxfiles.plist'
+launchctl unload /Library/LaunchDaemons/limit.maxfiles.plist
+launchctl load -w /Library/LaunchDaemons/limit.maxfiles.plist
+```
 
 ## Limit max processes (MacOS) tunnings
-Todo: implement
+Execute following script:
+
+```
+#!/bin/bash
+
+rm -rf '/Library/LaunchDaemons/limit.maxproc.plist'
+echo '<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE plist PUBLIC "-//Apple/DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">  
+  <plist version="1.0">
+    <dict>
+      <key>Label</key>
+        <string>limit.maxproc</string>
+      <key>ProgramArguments</key>
+        <array>
+          <string>launchctl</string>
+          <string>limit</string>
+          <string>maxproc</string>
+          <string>10000</string>
+          <string>10000</string>
+        </array>
+      <key>RunAtLoad</key>
+        <true />
+      <key>ServiceIPC</key>
+        <false />
+    </dict>
+  </plist>' >> '/Library/LaunchDaemons/limit.maxproc.plist'
+launchctl unload /Library/LaunchDaemons/limit.maxproc.plist
+launchctl load -w /Library/LaunchDaemons/limit.maxproc.plist
+```
