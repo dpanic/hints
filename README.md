@@ -166,15 +166,12 @@ net.ipv4.tcp_moderate_rcvbuf = 1
 net.ipv4.tcp_no_metrics_save = 1
 net.ipv4.tcp_congestion_control = htcp
 net.ipv4.tcp_mtu_probing = 1
-net.ipv4.tcp_timestamps = 0
-net.ipv4.tcp_sack = 0
-net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_max_syn_backlog = 4096
 net.ipv4.tcp_mem = 50576 64768 98152
 net.ipv4.ip_local_port_range = 2000 65000
-net.ipv4.netdev_max_backlog = 2500
-net.ipv4.tcp_tw_reuse = 1
-net.ipv4.tcp_fin_timeout = 5
+net.ipv4.tcp_fin_timeout = 15
+net.ipv4.tcp_sack = 1
+net.ipv4.tcp_syncookies = 1
 ```
 After saving run following command:
 ```
