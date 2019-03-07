@@ -172,6 +172,7 @@ net.ipv4.ip_local_port_range = 2000 65000
 net.ipv4.tcp_fin_timeout = 15
 net.ipv4.tcp_sack = 1
 net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_timestamps=0
 ```
 After saving run following command:
 ```
