@@ -20,6 +20,7 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 15. [Limit max processes (MacOS) tunnings](#section15)
 16. [Enable ramdisk (MacOS)](#section16)
 17. [Limit cpu resources per process](#section17)
+18. [SSH X11 forwarding and Chrome Headless](#section18)
 
 
 <a name="section1"></a>
@@ -452,3 +453,27 @@ One can limit how many CPU resources are consumed by it's cpu on multiple ways. 
 - Reference 2: https://www.digitalocean.com/community/tutorials/how-to-limit-resources-using-cgroups-on-centos-6
 
 Problem with cputool as it works in a hacky way. It works by sending SIGSTOP and SIGCONT to the targeted process.
+
+
+
+<a name="section18"></a>
+## SSH X11 forwarding and Chrome Headless
+
+In order to enable Linux server to forward X11 you should edit /etc/ssh
+Edit /etc/ssh/sshd and uncomment "X11Forwarding yes".
+
+On client side you should connect by following command **ssh -vv -X -C user@ip**. Where -C is enabling compression.
+
+In case you're using Chrome, you should extend puppetter startup time from 30 seconds to 60-90 seconds. Example:
+
+```
+let options = {
+    headless: true,
+    ignoreHTTPSErrors: true,
+    dumpio: true,
+    timeout: 120 * 1000,
+    args: config.puppetter['args'],
+};
+
+puppeteer.launch(options).then(async browser => { ... }
+```
