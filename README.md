@@ -3,8 +3,8 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 
 
 # Table of Contents
-1. [How to detect zombie process](#section1)
-2. [PHP-FPM long-run is expensive on CPU](#section2)
+1. [Zombie process](#section1)
+2. [PHP-FPM long-run is expensive](#section2)
 3. [Dirty Python](#section3)
 4. [Regex vs split/explode](#section4)
 5. [Chrome Headless creates huge server load](#section5)
@@ -25,15 +25,15 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 
 <a name="section1"></a>
 
-## How to detect zombie process 
+## Zombie process 
 Zombie process is process which is finished, but not removed from process table.
-One can create zombie process by following scenario. Parent process forks child process. During it's runtime, parent process dies leaving children process which becomes zombie. So
+One can create zombie process by following scenario. Parent process forks child process. During it's runtime, parent process dies leaving children process which becomes zombie. 
 
 
 
 <a name="section2"></a>
 
-## PHP-FPM long-run is expensive on CPU 
+## PHP-FPM long-run is expensive 
 If you design PHP-FPM to do long running requests, you will end up in big server load. PHP is scripting language designed for quick and short responses, not long running ones. To be more precise if you setup PHP-FPM with 20 processes, and you have 20 long running processes your PHP-FPM will be stuck for other requests. Your service should be designed to accept request, enqueue it, give you request id, and kindly ask you to visit it later for results; or push you results when they're finished.
 
 
