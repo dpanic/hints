@@ -202,6 +202,14 @@ echo "session required pam_limits.so" >> /etc/pam.d/common-session
 echo "session required pam_limits.so" >> /etc/pam.d/common-session-noninteractive
 ```
 
+If using ZSH, you should do this as well:
+```
+echo "DefaultLimitNOFILE=1048576" >> /etc/systemd/system.conf
+
+echo "DefaultLimitNOFILE=1048576" >> /etc/systemd/user.conf
+```
+
+
 
 <a name="section8"></a>
 
