@@ -22,14 +22,13 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 17. [Limit cpu resources per process](#section17)
 18. [SSH X11 forwarding and Chrome Headless](#section18)
 19. [Raspberry Pi + Pi hole + cloudflared auto update](#section19)
-
+20. [Allow only Cloudflare IPs](#section20)
 
 <a name="section1"></a>
 
 ## Zombie process 
 Zombie process is process which is finished, but not removed from process table.
 One can create zombie process by following scenario. Parent process forks child process. During it's runtime, parent process dies leaving children process which becomes zombie. 
-
 
 
 <a name="section2"></a>
@@ -524,3 +523,41 @@ fi
 
 Cron:
 0 6 * * * /bin/bash /home/pi/update.sh > /var/log/update.log 2>&1
+
+
+
+
+
+
+<a name="section19"></a>
+## Allow only Cloudflare to acccess server on port 80
+
+This script downloads most recent IPs v4 from Cloudflare and sets them as allowed for access on port 80, every other IP is blocked. 
+
+```
+#!/bin/bash
+echo 'y'| sudo ufw reset
+
+sudo ufw default allow incoming
+sudo ufw default allow outgoing
+
+
+sudo ufw allow from 192.168.0.0/16
+
+curl https://www.cloudflare.com/ips-v4 > ips.txt
+
+input="ips.txt"
+while IFS= read -r line
+do
+    if [[ "$line" == "" ]]; then        
+        continue
+    fi
+
+    val="sudo ufw allow from $line to any port 80"
+    eval $val
+done < "$input"
+
+sudo ufw deny to any port 80
+echo 'y'| sudo ufw enable
+sudo ufw status
+```
