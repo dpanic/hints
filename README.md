@@ -21,6 +21,7 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 16. [Enable ramdisk (MacOS)](#section16)
 17. [Limit cpu resources per process](#section17)
 18. [SSH X11 forwarding and Chrome Headless](#section18)
+19. [Raspberry Pi + Pi hole + cloudflared auto update](#section19)
 
 
 <a name="section1"></a>
@@ -485,3 +486,41 @@ let options = {
 
 puppeteer.launch(options).then(async browser => { ... }
 ```
+
+
+
+
+<a name="section19"></a>
+## Raspberry PI + Pi hole + cloudflared auto update
+
+Here is small bash script which maintains Raspbian to be up2date.
+
+Code:
+
+```
+#!/bin/bash
+
+
+sudo apt update
+sudo apt-get update 
+sudo apt-get upgrade -y
+sudo apt-get -y --purge autoremove
+sudo apt-get autoclean
+
+/usr/local/bin/pihole -g -up
+/usr/local/bin/pihole -up
+
+/usr/local/bin/cloudflared update
+
+
+
+
+if [ -f /var/run/reboot-required ] 
+then
+        sudo reboot
+fi
+```
+
+
+Cron:
+0 6 * * * /bin/bash /home/pi/update.sh > /var/log/update.log 2>&1
