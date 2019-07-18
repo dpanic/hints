@@ -529,7 +529,7 @@ Cron:
 
 
 
-<a name="section19"></a>
+<a name="section20"></a>
 ## Allow only Cloudflare to acccess server on port 80
 
 This script downloads most recent IPs v4 from Cloudflare and sets them as allowed for access on port 80, every other IP is blocked. 
