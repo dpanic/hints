@@ -113,65 +113,69 @@ net.ipv4.ip_local_port_range = 2000 65535
 net.ipv4.tcp_rfc1337 = 1
 
 # Decrease the time default value for tcp_fin_timeout connection
-net.ipv4.tcp_fin_timeout = 15
+net.ipv4.tcp_fin_timeout = 10
 
 # Decrease the time default value for connections to keep alive
-net.ipv4.tcp_keepalive_time = 600
+net.ipv4.tcp_keepalive_time = 300
 net.ipv4.tcp_keepalive_probes = 5
 net.ipv4.tcp_keepalive_intvl = 15
 
-### TUNING NETWORK PERFORMANCE ###
-
-# Default Socket Receive Buffer
-net.core.rmem_default = 31457280
-
-# Maximum Socket Receive Buffer
-net.core.rmem_max = 134217728
-
-# Default Socket Send Buffer
-net.core.wmem_default = 31457280
-
-# Maximum Socket Send Buffer
-net.core.wmem_max = 134217728
 
 # Increase number of incoming connections
-net.core.somaxconn = 65536
+net.core.somaxconn = 65535
+net.ipv4.tcp_max_syn_backlog = 65535
+net.core.netdev_max_backlog = 100000
+net.core.netdev_budget = 50000
 
-# Increase number of incoming connections backlog
-net.core.netdev_max_backlog = 300000
+# Increase Linux autotuning TCP buffer limits
+# Set max to 16MB for 1GE and 32M (33554432) or 54M (56623104) for 10GE
+# Don't set tcp_mem itself! Let the kernel scale it based on RAM.
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.core.rmem_default = 16777216
+net.core.wmem_default = 16777216
+net.core.optmem_max = 40960
 
-# Increase the maximum amount of option memory buffers
-net.core.optmem_max = 25165824
+# cloudflare uses this for balancing latency and throughput
+# https://blog.cloudflare.com/the-story-of-one-latency-spike/
+net.ipv4.tcp_rmem = 4096 1048576 2097152
+net.ipv4.tcp_wmem = 4096 1048576 2097152
 
-# Increase the maximum total buffer-space allocatable
-# This is measured in units of pages (4096 bytes)
-net.ipv4.tcp_mem = 65536 131072 262144
-net.ipv4.udp_mem = 65536 131072 262144
-
-# Increase the read-buffer space allocatable
-net.ipv4.tcp_rmem = 4096 87380 134217728
-net.ipv4.udp_rmem_min = 16384
-
-# Increase the write-buffer-space allocatable
-net.ipv4.tcp_wmem = 4096 87380 134217728
-net.ipv4.udp_wmem_min = 16384
-
-# Increase the tcp-time-wait buckets pool size to prevent simple DOS attacks
-net.ipv4.tcp_max_tw_buckets = 1440000
-net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_tw_recycle = 0
 net.ipv4.tcp_tw_reuse = 1
-fs.inotify.max_user_watches=524288
-fs.inotify.max_user_watches=524288
 
-
+net.ipv4.tcp_congestion_control = htcp
+net.ipv4.tcp_congestion_control = bbr
+net.ipv4.tcp_notsent_lowat = 16384
+net.core.default_qdisc = fq
 net.ipv4.tcp_moderate_rcvbuf = 1
 net.ipv4.tcp_no_metrics_save = 1
-net.ipv4.tcp_congestion_control = htcp
 net.ipv4.tcp_mtu_probing = 1
-net.ipv4.tcp_max_syn_backlog = 4096
+
+net.ipv4.tcp_max_tw_buckets = 2000000
+
 net.ipv4.tcp_sack = 1
 net.ipv4.tcp_syncookies = 1
-net.ipv4.tcp_timestamps = 0
+net.ipv4.tcp_timestamps = 1
+net.ipv4.tcp_window_scaling = 1
+
+
+# Disable TCP slow start on idle connections
+net.ipv4.tcp_slow_start_after_idle = 0
+
+# If your servers talk UDP, also up these limits
+net.ipv4.udp_rmem_min = 8192
+net.ipv4.udp_wmem_min = 8192
+
+
+
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+
+
+
+fs.inotify.max_user_watches=524288
 ```
 After saving run following command:
 ```
