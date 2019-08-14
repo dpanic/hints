@@ -23,6 +23,7 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 18. [SSH X11 forwarding and Chrome Headless](#section18)
 19. [Raspberry Pi + Pi hole + cloudflared auto update](#section19)
 20. [Allow only Cloudflare IPs](#section20)
+21. [Enable BFQ scheduler](#section21)
 
 <a name="section1"></a>
 
@@ -100,14 +101,11 @@ vm.swappiness = 1
 vm.dirty_ratio = 60
 vm.dirty_background_ratio = 2
 
-
 ### GENERAL NETWORK SECURITY OPTIONS ###
 
 # Number of times SYNACKs for passive TCP connection.
 net.ipv4.tcp_synack_retries = 2
 
-# Allowed local port range
-net.ipv4.ip_local_port_range = 2000 65535
 
 # Protect Against TCP Time-Wait
 net.ipv4.tcp_rfc1337 = 1
@@ -126,6 +124,7 @@ net.core.somaxconn = 65535
 net.ipv4.tcp_max_syn_backlog = 65535
 net.core.netdev_max_backlog = 100000
 net.core.netdev_budget = 50000
+net.core.netdev_budget_usecs = 20000
 
 # Increase Linux autotuning TCP buffer limits
 # Set max to 16MB for 1GE and 32M (33554432) or 54M (56623104) for 10GE
@@ -140,6 +139,7 @@ net.core.optmem_max = 40960
 # https://blog.cloudflare.com/the-story-of-one-latency-spike/
 net.ipv4.tcp_rmem = 4096 1048576 2097152
 net.ipv4.tcp_wmem = 4096 1048576 2097152
+
 
 net.ipv4.tcp_tw_recycle = 0
 net.ipv4.tcp_tw_reuse = 1
@@ -164,18 +164,15 @@ net.ipv4.tcp_window_scaling = 1
 net.ipv4.tcp_slow_start_after_idle = 0
 
 # If your servers talk UDP, also up these limits
-net.ipv4.udp_rmem_min = 8192
-net.ipv4.udp_wmem_min = 8192
-
-
+net.ipv4.udp_rmem_min = 131072
+net.ipv4.udp_wmem_min = 131072
 
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 
-
-
 fs.inotify.max_user_watches=524288
+
 ```
 After saving run following command:
 ```
@@ -564,4 +561,23 @@ done < "$input"
 sudo ufw deny to any port 80
 echo 'y'| sudo ufw enable
 sudo ufw status
+```
+
+
+
+<a name="section21"></a>
+## Enable BFQ scheduler
+
+This script enables BFQ scheduler on ssd, nvme and mmcblk devices. 
+
+```
+cat /sys/block/*/queue/scheduler
+
+echo "bfq" > /etc/modules-load.d/bfq.conf
+echo 'ACTION=="add|change", KERNEL=="sd*[!0-9]|sr*|nvme*|mmcblk*", ATTR{queue/scheduler}="bfq"' > /etc/udev/rules.d/60-scheduler.rules
+sudo udevadm control --reload
+sudo udevadm trigger
+
+sleep 3
+cat /sys/block/*/queue/scheduler
 ```
