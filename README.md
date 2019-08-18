@@ -101,6 +101,7 @@ vm.swappiness = 1
 vm.dirty_ratio = 60
 vm.dirty_background_ratio = 2
 
+
 ### GENERAL NETWORK SECURITY OPTIONS ###
 
 # Number of times SYNACKs for passive TCP connection.
@@ -122,7 +123,7 @@ net.ipv4.tcp_keepalive_intvl = 15
 # Increase number of incoming connections
 net.core.somaxconn = 65535
 net.ipv4.tcp_max_syn_backlog = 65535
-net.core.netdev_max_backlog = 100000
+net.core.netdev_max_backlog = 30000
 net.core.netdev_budget = 50000
 net.core.netdev_budget_usecs = 20000
 
@@ -137,8 +138,8 @@ net.core.optmem_max = 40960
 
 # cloudflare uses this for balancing latency and throughput
 # https://blog.cloudflare.com/the-story-of-one-latency-spike/
-net.ipv4.tcp_rmem = 4096 1048576 2097152
-net.ipv4.tcp_wmem = 4096 1048576 2097152
+net.ipv4.tcp_rmem = 4096 87380 33554432
+net.ipv4.tcp_wmem = 4096 65536 33554432
 
 
 net.ipv4.tcp_tw_recycle = 0
@@ -154,22 +155,40 @@ net.ipv4.tcp_mtu_probing = 1
 
 net.ipv4.tcp_max_tw_buckets = 2000000
 
-net.ipv4.tcp_sack = 1
+
+net.ipv4.tcp_fastopen=3
+#net.ipv4.tcp_low_latency=1
 net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_timestamps = 1
 net.ipv4.tcp_window_scaling = 1
+net.ipv4.tcp_dsack = 1
+net.ipv4.tcp_sack = 1
+net.ipv4.tcp_fack = 1
+
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.rp_filter = 1
+
+net.ipv4.route.flush = 1
+
+net.ipv4.conf.all.log_martians = 0
+net.ipv4.conf.default.log_martians = 0
+
 
 
 # Disable TCP slow start on idle connections
 net.ipv4.tcp_slow_start_after_idle = 0
 
 # If your servers talk UDP, also up these limits
-net.ipv4.udp_rmem_min = 131072
-net.ipv4.udp_wmem_min = 131072
+net.ipv4.udp_mem=4096 87380 8388608
+
 
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
+net.ipv6.conf.all.autoconf=0
+net.ipv6.conf.all.accept_ra=0
+net.ipv6.conf.default.autoconf=0
+net.ipv6.conf.default.accept_ra=0
 
 fs.inotify.max_user_watches=524288
 
