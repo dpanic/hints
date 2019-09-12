@@ -181,15 +181,6 @@ net.ipv4.tcp_slow_start_after_idle = 0
 # If your servers talk UDP, also up these limits
 net.ipv4.udp_mem=4096 87380 8388608
 
-
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-net.ipv6.conf.all.autoconf=0
-net.ipv6.conf.all.accept_ra=0
-net.ipv6.conf.default.autoconf=0
-net.ipv6.conf.default.accept_ra=0
-
 fs.inotify.max_user_watches=524288
 
 ```
