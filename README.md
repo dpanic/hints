@@ -93,26 +93,13 @@ tmpfs /tmp tmpfs defaults,mode=1777,size=2048M 0 0
 ## sysctl.conf for high server throughput
 Here are server tunings which I use:
 ```
-# Increase size of file handles and inode cache
 fs.file-max = 2097152
+fs.inotify.max_user_watches=524288
 
 # Do less swapping
 vm.swappiness = 1
 vm.dirty_ratio = 60
 vm.dirty_background_ratio = 2
-
-
-### GENERAL NETWORK SECURITY OPTIONS ###
-
-# Number of times SYNACKs for passive TCP connection.
-net.ipv4.tcp_synack_retries = 2
-
-
-# Protect Against TCP Time-Wait
-net.ipv4.tcp_rfc1337 = 1
-
-# Decrease the time default value for tcp_fin_timeout connection
-net.ipv4.tcp_fin_timeout = 10
 
 # Decrease the time default value for connections to keep alive
 net.ipv4.tcp_keepalive_time = 300
@@ -120,69 +107,16 @@ net.ipv4.tcp_keepalive_probes = 5
 net.ipv4.tcp_keepalive_intvl = 15
 
 
-# Increase number of incoming connections
 net.core.somaxconn = 65535
 net.ipv4.tcp_max_syn_backlog = 65535
-net.core.netdev_max_backlog = 30000
-net.core.netdev_budget = 50000
-net.core.netdev_budget_usecs = 20000
 
-# Increase Linux autotuning TCP buffer limits
-# Set max to 16MB for 1GE and 32M (33554432) or 54M (56623104) for 10GE
-# Don't set tcp_mem itself! Let the kernel scale it based on RAM.
-net.core.rmem_max = 16777216
-net.core.wmem_max = 16777216
-net.core.rmem_default = 16777216
-net.core.wmem_default = 16777216
-net.core.optmem_max = 40960
-
-# cloudflare uses this for balancing latency and throughput
-# https://blog.cloudflare.com/the-story-of-one-latency-spike/
-net.ipv4.tcp_rmem = 4096 87380 33554432
-net.ipv4.tcp_wmem = 4096 65536 33554432
-
-
-net.ipv4.tcp_tw_recycle = 0
-net.ipv4.tcp_tw_reuse = 1
-
-net.ipv4.tcp_congestion_control = htcp
-net.ipv4.tcp_congestion_control = bbr
-net.ipv4.tcp_notsent_lowat = 16384
-net.core.default_qdisc = fq
-net.ipv4.tcp_moderate_rcvbuf = 1
-net.ipv4.tcp_no_metrics_save = 1
-net.ipv4.tcp_mtu_probing = 1
-
-net.ipv4.tcp_max_tw_buckets = 2000000
-
-
-net.ipv4.tcp_fastopen=3
-#net.ipv4.tcp_low_latency=1
-net.ipv4.tcp_syncookies = 1
-net.ipv4.tcp_timestamps = 1
-net.ipv4.tcp_window_scaling = 1
-net.ipv4.tcp_dsack = 1
-net.ipv4.tcp_sack = 1
-net.ipv4.tcp_fack = 1
-
-net.ipv4.conf.all.rp_filter = 1
-net.ipv4.conf.default.rp_filter = 1
-
-net.ipv4.route.flush = 1
-
-net.ipv4.conf.all.log_martians = 0
-net.ipv4.conf.default.log_martians = 0
-
-
-
-# Disable TCP slow start on idle connections
-net.ipv4.tcp_slow_start_after_idle = 0
-
-# If your servers talk UDP, also up these limits
-net.ipv4.udp_mem=4096 87380 8388608
-
-fs.inotify.max_user_watches=524288
-
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+net.ipv6.conf.all.autoconf=0
+net.ipv6.conf.all.accept_ra=0
+net.ipv6.conf.default.autoconf=0
+net.ipv6.conf.default.accept_ra=0
 ```
 After saving run following command:
 ```
