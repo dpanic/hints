@@ -26,6 +26,7 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 21. [Enable BFQ scheduler](#section21)
 22. [SSH Client Config](#section22)
 23. [SSH Server Config](#section23)
+23. [NGINX Web Server Config](#section24)
 
 <a name="section1"></a>
 
@@ -596,4 +597,95 @@ Ciphers aes128-ctr,aes192-ctr,aes256-ctr,chacha20-poly1305@openssh.com,aes256-gc
 HostKeyAlgorithms ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-rsa,ssh-dss
 KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
 MACs hmac-sha2-256,hmac-sha2-512,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,umac-128@openssh.com
+```
+
+
+
+
+<a name="section24"></a>
+## NGINX Web Server Config
+
+Optimized NGINX configuration:
+```
+user                                www-data;
+pid                                 /var/run/nginx.pid;
+
+worker_processes                    auto;
+worker_rlimit_nofile                65535;
+events {
+    worker_connections              65535;
+    multi_accept                    on;
+}
+
+http {
+    # Basic Settings
+    sendfile                        on;
+    tcp_nopush                      on;
+    tcp_nodelay                     on;
+    server_tokens                   off;
+    log_not_found                   off;
+
+    # Buffer settings
+    client_max_body_size            32m;
+    client_body_buffer_size         16k;
+    client_header_buffer_size       64k;
+    large_client_header_buffers     16 128k;
+
+    server_names_hash_bucket_size   64;
+
+    # Timeout settings
+    reset_timedout_connection       on;
+    client_body_timeout             8;
+    client_header_timeout           8;
+    send_timeout                    25;
+
+    keepalive_timeout               15;
+    keepalive_requests              100;
+    open_file_cache                 max=100;
+    types_hash_max_size             2048;
+
+
+    # SSL Settings
+    ssl_stapling                    on;
+    ssl_stapling_verify             on;
+    ssl_prefer_server_ciphers       on;
+    ssl_session_tickets             off;
+    ssl_session_timeout             1d;
+    ssl_session_cache               shared:SSL:10m;
+    ssl_buffer_size                 8k;
+    ssl_protocols                   TLSv1.2 TLSv1.3;
+    ssl_certificate                 /etc/ssl/example.com.tc.crt;
+    ssl_certificate_key             /etc/ssl/example.com.key;
+    ssl_trusted_certificate         /etc/ssl/example.com.tc.crt;
+    ssl_dhparam                     /etc/ssl/example.com.dhp;
+    ssl_ciphers                     ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_ecdh_curve                  secp521r1:secp384r1;
+
+    resolver                        1.1.1.1 1.0.0.1 8.8.8.8 4.2.2.2 8.8.4.4 4.2.2.1 valid=300s;
+    resolver_timeout                8s;
+
+    # Gzip Settings
+    gzip                            on;
+    gzip_static                     on;
+    gzip_vary                       on;
+    gzip_comp_level                 2;
+    gzip_buffers                    16 8k;
+    gzip_http_version               1.1;
+    gzip_disable                    "msie6";
+    gzip_min_length                 5120;
+    gzip_proxied                    expired no-cache no-store private auth;
+    gzip_types                      text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # MIME settings
+    include                         /etc/nginx/mime.types;
+    default_type                    application/octet-stream;
+
+    # Logging Settings
+    access_log                      /var/log/nginx/access.log;
+    error_log                       /var/log/nginx/error.log;
+
+    # Virtual Host Configs
+    include                         /etc/nginx/conf.d/*.conf;
+    include                         /etc/nginx/sites-enabled/*;
+}
 ```
