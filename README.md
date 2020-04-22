@@ -25,6 +25,7 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 20. [Allow only Cloudflare IPs](#section20)
 21. [Enable BFQ scheduler](#section21)
 22. [SSH Client Config](#section22)
+23. [SSH Server Config](#section23)
 
 <a name="section1"></a>
 
@@ -541,8 +542,7 @@ cat /sys/block/*/queue/scheduler
 <a name="section22"></a>
 ## SSH Client Config
 
-This script enables BFQ scheduler on ssd, nvme and mmcblk devices. 
-
+Optimized SSH Client config:
 ```
 Host *
     ForwardX11 yes
@@ -557,4 +557,40 @@ Host *
     AddressFamily inet
     Protocol 2
     PreferredAuthentications=publickey
+```
+
+
+
+<a name="section23"></a>
+## SSH Server Config
+
+Optimized SSH Server config:
+```
+Port 22
+AddressFamily any
+ListenAddress 0.0.0.0
+
+PubkeyAuthentication yes
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+GSSAPIAuthentication no
+UsePAM yes
+
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+X11Forwarding yes
+
+PrintMotd no
+PrintLastLog yes
+TCPKeepAlive yes
+Compression delayed
+UseDNS no
+
+AcceptEnv LANG LC_*
+Subsystem       sftp    /usr/lib/openssh/sftp-server
+
+ClientAliveInterval 120
+ClientAliveCountMax 40
+
+Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes128-cbc,aes192-cbc,aes256-cbc,chacha20-poly1305@openssh.com,3des-cbc
 ```
