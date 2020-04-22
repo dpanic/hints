@@ -24,6 +24,7 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 19. [Raspberry Pi + Pi hole + cloudflared auto update](#section19)
 20. [Allow only Cloudflare IPs](#section20)
 21. [Enable BFQ scheduler](#section21)
+22. [SSH Client Config](#section22)
 
 <a name="section1"></a>
 
@@ -100,6 +101,8 @@ fs.inotify.max_user_watches=524288
 vm.swappiness = 1
 vm.dirty_ratio = 60
 vm.dirty_background_ratio = 2
+vm.max_map_count = 768000
+vm.vfs_cache_pressure=50
 
 # Decrease the time default value for connections to keep alive
 net.ipv4.tcp_keepalive_time = 300
@@ -110,6 +113,11 @@ net.ipv4.tcp_keepalive_intvl = 15
 net.core.somaxconn = 65535
 net.ipv4.tcp_max_syn_backlog = 65535
 
+
+net.core.netdev_max_backlog = 100000
+net.core.netdev_budget = 60000
+net.core.netdev_budget_usecs = 6000
+
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
@@ -117,6 +125,8 @@ net.ipv6.conf.all.autoconf=0
 net.ipv6.conf.all.accept_ra=0
 net.ipv6.conf.default.autoconf=0
 net.ipv6.conf.default.accept_ra=0
+
+
 ```
 After saving run following command:
 ```
@@ -524,4 +534,27 @@ sudo udevadm trigger
 
 sleep 3
 cat /sys/block/*/queue/scheduler
+```
+
+
+
+<a name="section22"></a>
+## SSH Client Config
+
+This script enables BFQ scheduler on ssd, nvme and mmcblk devices. 
+
+```
+Host *
+    ForwardX11 yes
+    ForwardAgent yes
+    Compression yes
+    ControlMaster auto
+    ControlPath ~/.ssh/control/%r@%h
+    ControlPersist 600
+    ServerAliveInterval 60
+    ServerAliveCountMax 20
+    IPQoS lowdelay throughput
+    AddressFamily inet
+    Protocol 2
+    PreferredAuthentications=publickey
 ```
