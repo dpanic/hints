@@ -26,7 +26,9 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 21. [Enable BFQ scheduler](#section21)
 22. [SSH Client Config](#section22)
 23. [SSH Server Config](#section23)
-23. [NGINX Web Server Config](#section24)
+24. [NGINX Web Server Config](#section24)
+25. [SSH Clone Remote Machine](#section25)
+
 
 <a name="section1"></a>
 
@@ -557,7 +559,7 @@ Host *
     IPQoS lowdelay throughput
     AddressFamily inet
     Protocol 2
-    PreferredAuthentications=publickey
+    PreferredAuthentications=publickey,password
 ```
 
 
@@ -688,4 +690,14 @@ http {
     include                         /etc/nginx/conf.d/*.conf;
     include                         /etc/nginx/sites-enabled/*;
 }
+```
+
+
+
+<a name="section25"></a>
+## SSH Clone Remote Machine
+
+SSH code to clone remote machine:
+```
+ssh root@server "sudo dd if=/dev/vda1 | gzip -1 -" | dd of=disk.img.gz
 ```
