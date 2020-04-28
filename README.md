@@ -111,14 +111,14 @@ net.ipv4.tcp_keepalive_time = 300
 net.ipv4.tcp_keepalive_probes = 5
 net.ipv4.tcp_keepalive_intvl = 15
 
-
 net.core.somaxconn = 65535
 net.ipv4.tcp_max_syn_backlog = 65535
-
 
 net.core.netdev_max_backlog = 100000
 net.core.netdev_budget = 60000
 net.core.netdev_budget_usecs = 6000
+net.core.rmem_max=10485760
+
 
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
