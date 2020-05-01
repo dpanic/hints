@@ -113,6 +113,15 @@ net.ipv4.tcp_keepalive_time = 300
 net.ipv4.tcp_keepalive_probes = 5
 net.ipv4.tcp_keepalive_intvl = 15
 
+
+net.ipv4.tcp_no_metrics_save = 1
+net.ipv4.tcp_moderate_rcvbuf = 1
+
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+net.ipv4.icmp_ignore_bogus_error_responses = 1
+
+kernel.sysrq = 0
+
 net.core.somaxconn = 65535
 net.ipv4.tcp_max_syn_backlog = 65535
 
