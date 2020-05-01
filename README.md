@@ -101,18 +101,17 @@ Here are server tunings which I use:
 fs.file-max = 2097152
 fs.inotify.max_user_watches=524288
 
-# Do less swapping
 vm.swappiness = 1
 vm.dirty_ratio = 60
 vm.dirty_background_ratio = 2
 vm.max_map_count = 768000
 vm.vfs_cache_pressure=50
 
-# Decrease the time default value for connections to keep alive
+
 net.ipv4.tcp_keepalive_time = 300
 net.ipv4.tcp_keepalive_probes = 5
 net.ipv4.tcp_keepalive_intvl = 15
-
+net.ipv4.tcp_max_syn_backlog = 65535
 
 net.ipv4.tcp_no_metrics_save = 1
 net.ipv4.tcp_moderate_rcvbuf = 1
@@ -122,14 +121,11 @@ net.ipv4.icmp_ignore_bogus_error_responses = 1
 
 kernel.sysrq = 0
 
-net.core.somaxconn = 65535
-net.ipv4.tcp_max_syn_backlog = 65535
-
-net.core.netdev_max_backlog = 100000
+net.core.somaxconn = 262144
+net.core.netdev_max_backlog = 262144
 net.core.netdev_budget = 60000
 net.core.netdev_budget_usecs = 6000
 net.core.rmem_max=10485760
-
 
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
@@ -138,6 +134,8 @@ net.ipv6.conf.all.autoconf=0
 net.ipv6.conf.all.accept_ra=0
 net.ipv6.conf.default.autoconf=0
 net.ipv6.conf.default.accept_ra=0
+
+
 
 
 ```
