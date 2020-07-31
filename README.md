@@ -160,7 +160,10 @@ root      soft    nofile      524288
 *         soft    nproc       10240
 *         hard    nproc       10240
 root      soft    nproc       10240
-root      hard    nproc       1024
+root      hard    nproc       10240
+
+*         hard    stack       131072
+*         soft    stack       131072
 ```
 
 ```
