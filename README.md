@@ -3,31 +3,75 @@ My name is Dušan. And I will share my experience with you. Here you can find hi
 
 
 # Table of Contents
-1. [Zombie process](#section1)
-2. [PHP-FPM long-run is expensive](#section2)
-3. [Dirty Python](#section3)
-4. [Regex vs split/explode](#section4)
-5. [Chrome Headless creates huge server load](#section5)
-6. [sysctl.conf for high server throughput](#section6)
-7. [Limit open files (Linux) tunnings](#section7)
-8. [MySQL server tunnings](#section8)
-9. [Forking is expensive](#section9)
-10. [SRE: MySQL server](#section10)
-11. [MySQL utf8mb4](#section11)
-12. [SRE: Force caching of files on disk](#section12)
-13. [Fail2Ban to the rescue](#section13)
-14. [Limit open files (MacOS) tunnings](#section14)
-15. [Limit max processes (MacOS) tunnings](#section15)
-16. [Enable ramdisk (MacOS)](#section16)
-17. [Limit cpu resources per process](#section17)
-18. [SSH X11 forwarding and Chrome Headless](#section18)
-19. [Raspberry Pi + Pi hole + cloudflared auto update](#section19)
-20. [Allow only Cloudflare IPs](#section20)
-21. [Enable BFQ scheduler](#section21)
-22. [SSH Client Config](#section22)
-23. [SSH Server Config](#section23)
-24. [NGINX Web Server Config](#section24)
-25. [SSH Clone Remote Machine](#section25)
+### General
+* [MySQL utf8mb4](#section11)
+* [Zombie process](#section1)
+* [SSH X11 forwarding and Chrome Headless](#section18)
+* [Patch snap pdftk to run from another folder](#section26)
+
+### Security
+* [Raspberry Pi + Pi hole + cloudflared auto update](#section19)
+* [Fail2Ban to the rescue](#section13)
+* [Allow only Cloudflare IPs](#section20)
+
+### Configuration
+* [sysctl.conf for high server throughput](#section6)
+* [Limit open files (Linux) tunnings](#section7)
+* [MySQL server tunnings](#section8)
+* [Limit open files (MacOS) tunnings](#section14)
+* [Limit max processes (MacOS) tunnings](#section15)
+* [Enable ramdisk (MacOS)](#section16)
+* [NGINX Web Server Config](#section24)
+* [Enable BFQ scheduler](#section21)
+* [SSH Client Config](#section22)
+* [SSH Server Config](#section23)
+
+### Performance
+* [Dirty Python](#section3)
+* [Regex vs split/explode](#section4)
+* [Chrome Headless creates huge server load](#section5)
+* [Limit cpu resources per process](#section17)
+
+### Site Reliability Engineering
+* [SRE: MySQL server](#section10)
+* [SRE: Force caching of files on disk](#section12)
+* [SSH Clone Remote Machine](#section25)
+* [PHP-FPM long-run is expensive](#section2)
+* [Forking is expensive](#section9)
+
+
+
+
+
+<a name="section26"></a>
+
+## Patch snap pdftk to run from another folder
+In case you need to modify pdftk which comes from snap, in order to run it from your folder.
+You need to apply following
+
+I have unquashed snap and unpacked it to /tmp/pdftk
+```
+dpanic@master:current/usr/bin ➜ ./pdftk   
+zsh: not a directory: ./pdftk
+```
+
+```
+cd /tmp/pdftk/usr/bin
+patchelf --set-interpreter /tmp/pdftk/current/lib/x86_64-linux-gnu/ld-2.23.so pdftk
+```
+
+```
+dpanic@master:current/usr/bin ➜ ./pdftk        
+SYNOPSIS
+       pdftk <input PDF files | - | PROMPT>
+            [ input_pw <input PDF owner passwords | PROMPT> ]
+            [ <operation> <operation arguments> ]
+            [ output <output filename | - | PROMPT> ]
+            ...
+```
+
+
+
 
 
 <a name="section1"></a>
