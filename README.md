@@ -1,5 +1,5 @@
 # Hints
-My name is Dušan. And I will share my experience with you. Here you can find hints about Linux, SRE, DBs, programming itself...
+My name is Dušan. And I will share my knowledge with you. Here you can find hints about Linux, SRE, DBs, programming itself...
 
 
 # Table of Contents
