@@ -11,7 +11,7 @@ My name is Dušan. And I will share my knowledge with you. Here you can find hin
 
 ### Security
 * [Raspberry Pi + Pi hole + cloudflared auto update](#section19)
-* [Fail2Ban to the rescue](#section13)
+* [Fail2Ban Server Config](#section13)
 * [Allow only Cloudflare IPs](#section20)
 
 ### Configuration
@@ -331,23 +331,42 @@ MySQL use utf8mb4 over utf8 encoding. Reference: https://medium.com/@adamhooper/
 ## SRE: Force caching of files on disk
 If you have system similar to Amazon's Lambda, something which is constantly starting/stopping some code, or you have Web Application which you want to make highly available, reducing disk reads. You may force it (from time to time) to re-read, cache whole source code. Example: /usr/bin/vmtouch ; Reference: https://hoytech.com/vmtouch/ 
 
+Example code:
+```
+#!/bin/bash
 
+cd /var/www/html
+
+files=`find -type f|grep php`
+for file in $files; do
+    vmtouch -t $file
+done
+```
 
 <a name="section13"></a>
 
-## Fail2Ban to the rescue 
+## Fail2Ban Server Config 
 Sometimes is cool to setup fail2ban rule for SSH to ban after 3 failed requests, email you about that and block that bot/person for 86400 seconds. However, as fail2ban knows how to read logs, it can be configured for analyzing abusive 403, 401, 50X, 30X requests on web server...
 
 
 ```
-/etc/fail2ban/jail.conf:
+/etc/fail2ban/jail.d/default.conf:
 
-findtime = 600
-maxretry = 5
-destemail = dpanic@gmail.com
-sender = dpanic.fail2ban@gmail.com
-mta = sendmail
+[DEFAULT]
+ignoreip = 127.0.0.1/8 ::1 192.168.1.0/24
+bantime  = 1d
+findtime  = 10m
+maxretry = 3
 action = %(action_mwl)s
+destemail = example@example.com
+sender = fail2ban@example.com
+backend = auto
+banaction = iptables-multiport
+
+[sshd]
+enabled = true
+maxretry  = 3
+findtime  = 1d
 ```
 
 
@@ -755,3 +774,6 @@ SSH code to clone remote machine:
 ```
 ssh root@server "sudo dd if=/dev/vda1 | gzip -1 -" | dd of=disk.img.gz
 ```
+
+
+
