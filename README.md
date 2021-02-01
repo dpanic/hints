@@ -25,6 +25,7 @@ My name is Dušan. And I will share my knowledge with you. Here you can find hin
 * [Enable BFQ scheduler](#section21)
 * [SSH Client Config](#section22)
 * [SSH Server Config](#section23)
+* [Apple Magic Keyboard on Ubuntu](#section26)
 
 ### Performance
 * [Dirty Python](#section3)
@@ -777,3 +778,20 @@ ssh root@server "sudo dd if=/dev/vda1 | gzip -1 -" | dd of=disk.img.gz
 
 
 
+
+
+
+
+<a name="section26"></a>
+## Apple Magic Keyboard on Ubuntu
+
+Enable kernel module:
+```
+echo options hid_apple fnmode=2 | sudo tee -a /etc/modprobe.d/hid_apple.conf
+sudo update-initramfs -u -k all
+```
+
+Fix missing `, type this:
+```
+echo "setxkbmap -option apple:badmap" >> ~/.profile
+```
