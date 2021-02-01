@@ -25,7 +25,7 @@ My name is Dušan. And I will share my knowledge with you. Here you can find hin
 * [Enable BFQ scheduler](#section21)
 * [SSH Client Config](#section22)
 * [SSH Server Config](#section23)
-* [Apple Magic Keyboard on Ubuntu](#section26)
+* [Apple Magic Keyboard on Ubuntu](#section27)
 
 ### Performance
 * [Dirty Python](#section3)
@@ -782,7 +782,7 @@ ssh root@server "sudo dd if=/dev/vda1 | gzip -1 -" | dd of=disk.img.gz
 
 
 
-<a name="section26"></a>
+<a name="section27"></a>
 ## Apple Magic Keyboard on Ubuntu
 
 Enable kernel module:
