@@ -8,7 +8,7 @@ My name is Dušan. And I will share my knowledge with you. Here you can find hin
 * [Zombie process](#section1)
 * [SSH X11 forwarding and Chrome Headless](#section18)
 * [Patch snap pdftk to run from another folder](#section26)
-
+* [List huge dirs](#section28)
 ### Security
 * [Raspberry Pi + Pi hole + cloudflared auto update](#section19)
 * [Fail2Ban Server Config](#section13)
@@ -794,4 +794,69 @@ sudo update-initramfs -u -k all
 Fix missing `, type this:
 ```
 echo "setxkbmap -option apple:badmap" >> ~/.profile
+```
+
+
+<a name="section27"></a>
+## List huge dirs
+This code is way much faster than listdir, because it uses low level syscall *getdents* directly
+
+Compile following code with ```gcc listdir.c -o listdir```
+```
+#define _GNU_SOURCE
+#include <dirent.h>     
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+
+#define handle_error(msg) \
+        do { perror(msg); exit(EXIT_FAILURE); } while (0)
+
+struct linux_dirent {
+    unsigned long  d_ino;
+    off_t          d_off;
+    unsigned short d_reclen;
+    char           d_name[];
+};
+
+#define BUF_SIZE 1024*1024*5
+
+int main(int argc, char *argv[]) {
+    int fd;
+    long nread;
+    char buf[BUF_SIZE];
+    struct linux_dirent *d;
+    char d_type;
+
+    fd = open(argc > 1 ? argv[1] : ".", O_RDONLY | O_DIRECTORY);
+    if (fd == -1) {
+        handle_error("open");
+    }
+
+    for (;;) {
+        nread = syscall(SYS_getdents, fd, buf, BUF_SIZE);
+        if (nread == -1) {
+            handle_error("getdents");
+        }
+
+        if (nread == 0) {
+            break;
+        }
+
+        for (long bpos = 0; bpos < nread;) {
+            d = (struct linux_dirent *) (buf + bpos);
+            
+            if (d->d_ino != 0) {
+                printf("%s\n", (char *) d->d_name);
+            }
+            bpos += d->d_reclen;
+        }
+    }
+
+    exit(EXIT_SUCCESS);
+}
 ```
