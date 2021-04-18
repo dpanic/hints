@@ -782,7 +782,7 @@ ssh root@server "sudo dd if=/dev/vda1 | gzip -1 -" | dd of=disk.img.gz
 
 
 
-<a name="section27"></a>
+<a name="section28"></a>
 ## Apple Magic Keyboard on Ubuntu
 
 Enable kernel module:
