@@ -802,7 +802,7 @@ echo "setxkbmap -option apple:badmap" >> ~/.profile
 This code is way much faster than listdir, because it uses low level syscall *getdents* directly
 
 Compile following code with ```gcc listdir.c -o listdir```
-```
+``` C
 #define _GNU_SOURCE
 #include <dirent.h>     
 #include <fcntl.h>
