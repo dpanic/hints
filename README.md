@@ -51,17 +51,17 @@ In case you need to modify pdftk which comes from snap, in order to run it from 
 You need to apply following
 
 I have unquashed snap and unpacked it to /tmp/pdftk
-```
+``` sh
 dpanic@master:current/usr/bin ➜ ./pdftk   
 zsh: not a directory: ./pdftk
 ```
 
-```
+``` sh
 cd /tmp/pdftk/usr/bin
 patchelf --set-interpreter /tmp/pdftk/current/lib/x86_64-linux-gnu/ld-2.23.so pdftk
 ```
 
-```
+``` sh
 dpanic@master:current/usr/bin ➜ ./pdftk        
 SYNOPSIS
        pdftk <input PDF files | - | PROMPT>
@@ -93,7 +93,7 @@ If you design PHP-FPM to do long running requests, you will end up in big server
 
 ## Dirty Python 
 If you want to archive speed in Python. You can access/check dictionary key by direct memory access. Example:
-```
+``` python
 d = {
     'key1': 'asd',
     'key2': 'asd',
@@ -114,7 +114,7 @@ print('key is_found = %s' %(is_found))
 ## Regex vs split/explode
 Sometimes is regex very convinient. Eg. parsing email in submited email form, parsing telephone number in submited form etc. Regexes are implemented as [finite state machine](https://en.wikipedia.org/wiki/Finite-state_machine), and that is why they are not super fast. Usually it is more convinient to do something like this:
 
-```
+``` python
 try:
     head = html.split('</head>')[0]
 except:
@@ -128,12 +128,13 @@ Than XML DOM parsing or similar.
 
 ## Chrome Headless creates huge server load
 Context switching is expensive, use kernel-lowlatency. Test case can be https://www.telegraf.rs or any similar website which is consuming lots of GPU.
-```
+
+``` sh
 apt-get install linux-lowlatency
 ```
 
 Or preferably you can setup /tmp for using ramdisk by adding it in /etc/fstab:
-```
+``` sh
 tmpfs /tmp tmpfs defaults,mode=1777,size=2048M 0 0
 ```
 
@@ -179,13 +180,10 @@ net.ipv6.conf.all.autoconf=0
 net.ipv6.conf.all.accept_ra=0
 net.ipv6.conf.default.autoconf=0
 net.ipv6.conf.default.accept_ra=0
-
-
-
-
 ```
+
 After saving run following command:
-```
+``` sh
 $ sysctl -p
 ```
 
@@ -211,15 +209,14 @@ root      hard    nproc       10240
 *         soft    stack       131072
 ```
 
-```
+``` sh
 echo "session required pam_limits.so" >> /etc/pam.d/common-session
 echo "session required pam_limits.so" >> /etc/pam.d/common-session-noninteractive
 ```
 
 If using ZSH, you should do this as well:
-```
+``` sh
 echo "DefaultLimitNOFILE=1048576" >> /etc/systemd/system.conf
-
 echo "DefaultLimitNOFILE=1048576" >> /etc/systemd/user.conf
 ```
 
@@ -292,7 +289,7 @@ sync_binlog = 1
 ## Forking is expensive
 When doing any kind of forking, creating new process. That is very expensive operation, because due to context switches. For example if you take following Python code:
 
-```
+``` python
 def dns_check(self, hostname):
     cmd = [
         '/usr/bin/host',
@@ -316,7 +313,7 @@ If run in paralell, with multiple threads. This can generate relativelly big ser
 ## SRE: MySQL server
 When having db with lots of inserts and deletes, index files, table files are constantly growing. In order to shrink database you can do this every N days:
 
-```
+``` sh
 $ mysqlcheck -u root --password=[REDACTED] -o --all-databases
 ```
 
@@ -333,7 +330,7 @@ MySQL use utf8mb4 over utf8 encoding. Reference: https://medium.com/@adamhooper/
 If you have system similar to Amazon's Lambda, something which is constantly starting/stopping some code, or you have Web Application which you want to make highly available, reducing disk reads. You may force it (from time to time) to re-read, cache whole source code. Example: /usr/bin/vmtouch ; Reference: https://hoytech.com/vmtouch/ 
 
 Example code:
-```
+``` sh
 #!/bin/bash
 
 cd /var/www/html
@@ -376,7 +373,7 @@ findtime  = 1d
 ## Limit open files (MacOS) tunnings
 
 Execute following script:
-```
+``` sh
 #!/bin/bash
 
 rm -rf '/Library/LaunchDaemons/limit.maxfiles.plist'
@@ -411,7 +408,7 @@ launchctl load -w /Library/LaunchDaemons/limit.maxfiles.plist
 ## Limit max processes (MacOS) tunnings
 Execute following script:
 
-```
+``` sh
 #!/bin/bash
 
 rm -rf '/Library/LaunchDaemons/limit.maxproc.plist'
@@ -445,7 +442,7 @@ launchctl load -w /Library/LaunchDaemons/limit.maxproc.plist
 
 ## Enable ramdisk (MacOS):
 
-```
+``` sh
 #!/bin/bash
 
 echo '#!/bin/sh' > /var/root/ramfs.sh
@@ -507,7 +504,7 @@ On client side you should connect by following command **ssh -vv -X -C user@ip**
 
 In case you're using Chrome, you should extend puppetter startup time from 30 seconds to 60-90 seconds. Example:
 
-```
+``` javascript
 let options = {
     headless: true,
     ignoreHTTPSErrors: true,
@@ -529,7 +526,7 @@ Here is small bash script which maintains Raspbian to be up2date.
 
 Code:
 
-```
+``` sh
 #!/bin/bash
 
 
@@ -544,9 +541,6 @@ sudo apt-get autoclean
 
 /usr/local/bin/cloudflared update
 
-
-
-
 if [ -f /var/run/reboot-required ] 
 then
         sudo reboot
@@ -555,8 +549,9 @@ fi
 
 
 Cron:
+``` sh
 0 6 * * * /bin/bash /home/pi/update.sh > /var/log/update.log 2>&1
-
+```
 
 
 
@@ -567,7 +562,7 @@ Cron:
 
 This script downloads most recent IPs v4 from Cloudflare and sets them as allowed for access on port 80, every other IP is blocked. 
 
-```
+``` sh
 #!/bin/bash
 echo 'y'| sudo ufw reset
 
@@ -602,7 +597,7 @@ sudo ufw status
 
 This script enables BFQ scheduler on ssd, nvme and mmcblk devices. 
 
-```
+``` sh
 cat /sys/block/*/queue/scheduler
 
 echo "bfq" > /etc/modules-load.d/bfq.conf
@@ -682,7 +677,7 @@ MACs hmac-sha2-256,hmac-sha2-512,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm
 ## NGINX Web Server Config
 
 Optimized NGINX configuration:
-```
+``` nginx
 user                                www-data;
 pid                                 /var/run/nginx.pid;
 
@@ -772,7 +767,7 @@ http {
 ## SSH Clone Remote Machine
 
 SSH code to clone remote machine:
-```
+``` sh
 ssh root@server "sudo dd if=/dev/vda1 | gzip -1 -" | dd of=disk.img.gz
 ```
 
@@ -786,13 +781,13 @@ ssh root@server "sudo dd if=/dev/vda1 | gzip -1 -" | dd of=disk.img.gz
 ## Apple Magic Keyboard on Ubuntu
 
 Enable kernel module:
-```
+``` sh
 echo options hid_apple fnmode=2 | sudo tee -a /etc/modprobe.d/hid_apple.conf
 sudo update-initramfs -u -k all
 ```
 
 Fix missing `, type this:
-```
+``` sh
 echo "setxkbmap -option apple:badmap" >> ~/.profile
 ```
 
