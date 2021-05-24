@@ -170,19 +170,19 @@ net.core.somaxconn = 262144
 net.core.netdev_max_backlog = 262144
 net.core.netdev_budget = 60000
 net.core.netdev_budget_usecs = 6000
-net.core.rmem_max=10485760
 
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-net.ipv6.conf.all.autoconf=0
-net.ipv6.conf.all.accept_ra=0
-net.ipv6.conf.default.autoconf=0
-net.ipv6.conf.default.accept_ra=0
+net.core.busy_poll = 50
+net.core.busy_read = 50
+net.ipv4.tcp_fastopen = 3
+net.ipv4.tcp_low_latency = 1
+net.ipv4.tcp_max_syn_backlog = 8192
+net.ipv4.tcp_syn_retries = 6
+net.ipv4.tcp_sack = 1
 
-
-
-
+net.core.wmem_max = 12582912
+net.core.rmem_max = 12582912
+net.ipv4.tcp_rmem = 10240 87380 12582912
+net.ipv4.tcp_wmem = 10240 87380 12582912
 ```
 After saving run following command:
 ```
