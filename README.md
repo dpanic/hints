@@ -172,12 +172,11 @@ net.core.netdev_max_backlog = 262144
 net.core.netdev_budget = 60000
 net.core.netdev_budget_usecs = 6000
 
+
 net.core.busy_poll = 50
 net.core.busy_read = 50
-net.ipv4.tcp_fastopen = 3
-net.ipv4.tcp_low_latency = 1
-net.ipv4.tcp_max_syn_backlog = 8192
-net.ipv4.tcp_syn_retries = 6
+net.ipv4.tcp_fastopen = 1
+net.ipv4.tcp_low_latency = 0
 net.ipv4.tcp_sack = 1
 
 
