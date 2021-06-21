@@ -176,7 +176,6 @@ net.core.netdev_budget_usecs = 6000
 net.core.busy_poll = 50
 net.core.busy_read = 50
 net.ipv4.tcp_fastopen = 1
-net.ipv4.tcp_low_latency = 0
 net.ipv4.tcp_sack = 1
 
 
