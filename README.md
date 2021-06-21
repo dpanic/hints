@@ -270,20 +270,17 @@ expire_logs_days = 10
 max_binlog_size = 100M
 
 innodb_file_per_table
-query_cache_size=0
-query_cache_type=0
-query_cache_limit=4M
 
 innodb_buffer_pool_size=1G
 innodb_log_file_size=512M
-innodb_buffer_pool_instances=1
+innodb_buffer_pool_instances=2
 
 innodb_write_io_threads = 8
 innodb_read_io_threads = 8
-innodb_thread_concurrency = 16
-innodb_flush_log_at_trx_commit = 2
+innodb_thread_concurrency = 8
+innodb_flush_log_at_trx_commit = 5
 innodb_log_buffer_size = 8M
-sync_binlog = 1
+sync_binlog = 5
 ```
 
 
