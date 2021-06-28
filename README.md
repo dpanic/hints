@@ -40,6 +40,8 @@ My name is Dušan. And I will share my knowledge with you. Here you can find hin
 * [PHP-FPM long-run is expensive](#section2)
 * [Forking is expensive](#section9)
 
+### Miscellaneous
+* [Record my desktop alias for getting window id](#section32)
 
 
 
@@ -854,4 +856,14 @@ int main(int argc, char *argv[]) {
 
     exit(EXIT_SUCCESS);
 }
+```
+
+
+
+<a name="section32"></a>
+## Record my desktop alias for getting window id
+
+Snipped:
+``` SH
+alias recordmywindow="recordmydesktop --windowid \`xwininfo | grep 'id: 0x' | grep -Eo '0x[a-z0-9]+'\`"
 ```
