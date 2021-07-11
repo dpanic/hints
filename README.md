@@ -32,6 +32,8 @@ My name is Dušan. And I will share my knowledge with you. Here you can find hin
 * [Regex vs split/explode](#section4)
 * [Chrome Headless creates huge server load](#section5)
 * [Limit cpu resources per process](#section17)
+* [Tune initial window size](#section33)
+
 
 ### Site Reliability Engineering
 * [SRE: MySQL server](#section10)
@@ -879,7 +881,18 @@ int main(int argc, char *argv[]) {
 <a name="section32"></a>
 ## Record my desktop alias for getting window id
 
-Snipped:
+Snippet:
 ``` SH
 alias recordmywindow="recordmydesktop --windowid \`xwininfo | grep 'id: 0x' | grep -Eo '0x[a-z0-9]+'\`"
+```
+
+
+<a name="section33"></a>
+## Tune initial window size
+As mentioned in Google's research https://research.google/pubs/pub36640/ it is usefull to increase intial window size to at least 10. Improves latency ant throughput.
+
+Copy this in /etc/rc.local:
+``` 
+defrt=`ip route | grep "^default" | head -1`
+ip route change $defrt initcwnd 10
 ```
