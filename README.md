@@ -146,6 +146,8 @@ tmpfs /tmp tmpfs defaults,mode=1777,size=2048M 0 0
 ## sysctl.conf for high server throughput
 Here are server tunings which I use:
 ```
+kernel.sysrq = 0
+
 fs.file-max = 2097152
 fs.inotify.max_user_watches=524288
 
@@ -155,36 +157,50 @@ vm.dirty_background_ratio = 2
 vm.max_map_count = 768000
 vm.vfs_cache_pressure=50
 
+# icmp tunings
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+net.ipv4.icmp_ignore_bogus_error_responses = 1
 
+# network ingress tunings
+net.core.somaxconn = 65535
+net.core.netdev_max_backlog = 30000
+net.core.netdev_budget = 60000
+net.core.netdev_budget_usecs = 6000
+
+# network performance tuning
+net.core.busy_poll = 50
+net.core.busy_read = 50
+net.ipv4.ipfrag_high_thresh = 8388608
+net.ipv4.tcp_fastopen = 3
+
+# not needed on lan, maybe on 3G/4G
+net.ipv4.tcp_sack = 0   
+net.ipv4.tcp_dsack = 0
+net.ipv4.tcp_fack = 0
+
+# tcp memory tunings
+net.core.wmem_max = 16777216
+net.core.wmem_default = 131072
+net.core.rmem_max = 16777216
+net.core.rmem_default = 131072
+net.ipv4.tcp_rmem = 4096 131072 16777216
+net.ipv4.tcp_wmem = 4096 131072 16777216
+net.ipv4.tcp_mem = 4096 131072 16777216
+
+# tcp general tunings
 net.ipv4.tcp_keepalive_time = 300
 net.ipv4.tcp_keepalive_probes = 5
 net.ipv4.tcp_keepalive_intvl = 15
 net.ipv4.tcp_max_syn_backlog = 65535
-
 net.ipv4.tcp_no_metrics_save = 1
 net.ipv4.tcp_moderate_rcvbuf = 1
 
-net.ipv4.icmp_echo_ignore_broadcasts = 1
-net.ipv4.icmp_ignore_bogus_error_responses = 1
+# disable TCP slow start on idle connections
+net.ipv4.tcp_slow_start_after_idle = 0
 
-kernel.sysrq = 0
-
-net.core.somaxconn = 262144
-net.core.netdev_max_backlog = 262144
-net.core.netdev_budget = 60000
-net.core.netdev_budget_usecs = 6000
-
-
-net.core.busy_poll = 50
-net.core.busy_read = 50
-net.ipv4.tcp_fastopen = 1
-net.ipv4.tcp_sack = 1
-
-
-net.core.wmem_max = 12582912
-net.core.rmem_max = 12582912
-net.ipv4.tcp_rmem = 10240 87380 12582912
-net.ipv4.tcp_wmem = 10240 87380 12582912
+# udp tunings
+net.ipv4.udp_rmem_min = 8192
+net.ipv4.udp_wmem_min = 8192
 ```
 
 After saving run following command:
