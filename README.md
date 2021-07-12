@@ -148,7 +148,7 @@ tmpfs /tmp tmpfs defaults,mode=1777,size=2048M 0 0
 ## sysctl.conf for high server throughput
 Here are server tunings which I use:
 ```
-kernel.sysrq = 0
+ykernel.sysrq = 0
 
 fs.file-max = 2097152
 fs.inotify.max_user_watches=524288
@@ -162,6 +162,7 @@ vm.vfs_cache_pressure=50
 # icmp tunings
 net.ipv4.icmp_echo_ignore_broadcasts = 1
 net.ipv4.icmp_ignore_bogus_error_responses = 1
+
 
 # network ingress tunings
 net.core.somaxconn = 65535
@@ -190,9 +191,10 @@ net.ipv4.tcp_wmem = 4096 131072 16777216
 net.ipv4.tcp_mem = 4096 131072 16777216
 
 # tcp general tunings
-net.ipv4.tcp_keepalive_time = 300
-net.ipv4.tcp_keepalive_probes = 5
-net.ipv4.tcp_keepalive_intvl = 15
+net.ipv4.tcp_keepalive_time = 60
+net.ipv4.tcp_keepalive_intvl = 10
+net.ipv4.tcp_keepalive_probes = 6
+net.ipv4.tcp_fin_timeout = 10
 net.ipv4.tcp_max_syn_backlog = 65535
 net.ipv4.tcp_no_metrics_save = 1
 net.ipv4.tcp_moderate_rcvbuf = 1
