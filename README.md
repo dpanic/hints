@@ -15,16 +15,12 @@ My name is Dušan. And I will share my knowledge with you. Here you can find hin
 * [Allow only Cloudflare IPs](#section20)
 
 ### Configuration
-* [sysctl.conf for high server throughput](#section6)
-* [Limit open files (Linux) tunnings](#section7)
 * [MySQL server tunnings](#section8)
 * [Limit open files (MacOS) tunnings](#section14)
 * [Limit max processes (MacOS) tunnings](#section15)
 * [Enable ramdisk (MacOS)](#section16)
 * [NGINX Web Server Config](#section24)
-* [Enable BFQ scheduler](#section21)
 * [SSH Client Config](#section22)
-* [SSH Server Config](#section23)
 * [Apple Magic Keyboard on Ubuntu](#section27)
 
 ### Performance
@@ -32,7 +28,6 @@ My name is Dušan. And I will share my knowledge with you. Here you can find hin
 * [Regex vs split/explode](#section4)
 * [Chrome Headless creates huge server load](#section5)
 * [Limit cpu resources per process](#section17)
-* [Tune initial window size](#section33)
 
 
 ### Site Reliability Engineering
@@ -131,7 +126,7 @@ Than XML DOM parsing or similar.
 <a name="section5"></a>
 
 ## Chrome Headless creates huge server load
-Context switching is expensive, use kernel-lowlatency. Test case can be https://www.telegraf.rs or any similar website which is consuming lots of GPU.
+Context switching is expensive, use kernel-lowlatency. Test case can be https://www.example.com or any similar website which is consuming lots of GPU.
 
 ``` sh
 apt-get install linux-lowlatency
@@ -140,109 +135,6 @@ apt-get install linux-lowlatency
 Or preferably you can setup /tmp for using ramdisk by adding it in /etc/fstab:
 ``` sh
 tmpfs /tmp tmpfs defaults,mode=1777,size=2048M 0 0
-```
-
-
-<a name="section6"></a>
-
-## sysctl.conf for high server throughput
-Here are server tunings which I use:
-```
-ykernel.sysrq = 0
-
-fs.file-max = 2097152
-fs.inotify.max_user_watches=524288
-
-vm.swappiness = 1
-vm.dirty_ratio = 60
-vm.dirty_background_ratio = 2
-vm.max_map_count = 768000
-vm.vfs_cache_pressure=50
-
-# icmp tunings
-net.ipv4.icmp_echo_ignore_broadcasts = 1
-net.ipv4.icmp_ignore_bogus_error_responses = 1
-
-
-# network ingress tunings
-net.core.somaxconn = 65535
-net.core.netdev_max_backlog = 30000
-net.core.netdev_budget = 60000
-net.core.netdev_budget_usecs = 6000
-
-# network performance tuning
-net.core.busy_poll = 50
-net.core.busy_read = 50
-net.ipv4.ipfrag_high_thresh = 8388608
-net.ipv4.tcp_fastopen = 3
-
-# not needed on lan, maybe on 3G/4G
-net.ipv4.tcp_sack = 0   
-net.ipv4.tcp_dsack = 0
-net.ipv4.tcp_fack = 0
-
-# tcp memory tunings
-net.core.wmem_max = 16777216
-net.core.wmem_default = 131072
-net.core.rmem_max = 16777216
-net.core.rmem_default = 131072
-net.ipv4.tcp_rmem = 4096 131072 16777216
-net.ipv4.tcp_wmem = 4096 131072 16777216
-net.ipv4.tcp_mem = 4096 131072 16777216
-
-# tcp general tunings
-net.ipv4.tcp_keepalive_time = 60
-net.ipv4.tcp_keepalive_intvl = 10
-net.ipv4.tcp_keepalive_probes = 6
-net.ipv4.tcp_fin_timeout = 10
-net.ipv4.tcp_max_syn_backlog = 65535
-net.ipv4.tcp_no_metrics_save = 1
-net.ipv4.tcp_moderate_rcvbuf = 1
-
-# disable TCP slow start on idle connections
-net.ipv4.tcp_slow_start_after_idle = 0
-
-# udp tunings
-net.ipv4.udp_rmem_min = 8192
-net.ipv4.udp_wmem_min = 8192
-```
-
-After saving run following command:
-``` sh
-$ sysctl -p
-```
-
-
-<a name="section7"></a>
-
-## Limit open files (Linux) tunnings
-Raising limits in Linux works like this.
-Edit /etc/security/limits.conf:
-```
-*         hard    nofile      524288
-*         soft    nofile      524288
-root      hard    nofile      524288
-root      soft    nofile      524288
-
-
-*         soft    nproc       10240
-*         hard    nproc       10240
-root      soft    nproc       10240
-root      hard    nproc       10240
-
-*         hard    stack       131072
-*         soft    stack       131072
-```
-
-``` sh
-echo "session required pam_limits.so" >> /etc/pam.d/common-session
-echo "session required pam_limits.so" >> /etc/pam.d/common-session-noninteractive
-```
-
-If using ZSH, you should do this as well:
-``` sh
-echo "DefaultLimitNOFILE=1048576" >> /etc/systemd/system.conf
-echo "DefaultLimitNOFILE=1048576" >> /etc/systemd/user.conf
 ```
 
 
@@ -565,7 +457,7 @@ sudo apt-get autoclean
 
 if [ -f /var/run/reboot-required ] 
 then
-        sudo reboot
+    sudo reboot 
 fi
 ```
 
@@ -613,26 +505,6 @@ sudo ufw status
 ```
 
 
-
-<a name="section21"></a>
-## Enable BFQ scheduler
-
-This script enables BFQ scheduler on ssd, nvme and mmcblk devices. 
-
-``` sh
-cat /sys/block/*/queue/scheduler
-
-echo "bfq" > /etc/modules-load.d/bfq.conf
-echo 'ACTION=="add|change", KERNEL=="sd*[!0-9]|sr*|nvme*|mmcblk*", ATTR{queue/scheduler}="bfq"' > /etc/udev/rules.d/60-scheduler.rules
-sudo udevadm control --reload
-sudo udevadm trigger
-
-sleep 3
-cat /sys/block/*/queue/scheduler
-```
-
-
-
 <a name="section22"></a>
 ## SSH Client Config
 
@@ -651,45 +523,6 @@ Host *
     AddressFamily inet
     Protocol 2
     PreferredAuthentications=publickey,password
-```
-
-
-
-<a name="section23"></a>
-## SSH Server Config
-
-Optimized SSH Server config:
-```
-Port 22
-AddressFamily any
-ListenAddress 0.0.0.0
-
-PubkeyAuthentication yes
-PasswordAuthentication no
-ChallengeResponseAuthentication no
-GSSAPIAuthentication no
-UsePAM yes
-
-AllowAgentForwarding yes
-AllowTcpForwarding yes
-X11Forwarding yes
-
-PrintMotd no
-PrintLastLog yes
-TCPKeepAlive yes
-Compression delayed
-UseDNS no
-
-AcceptEnv LANG LC_*
-Subsystem       sftp    /usr/lib/openssh/sftp-server
-
-ClientAliveInterval 120
-ClientAliveCountMax 40
-
-Ciphers aes128-ctr,aes192-ctr,aes256-ctr,chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
-HostKeyAlgorithms ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-rsa,ssh-dss
-KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
-MACs hmac-sha2-256,hmac-sha2-512,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,umac-128@openssh.com
 ```
 
 
@@ -888,13 +721,3 @@ Snippet:
 alias recordmywindow="recordmydesktop --windowid \`xwininfo | grep 'id: 0x' | grep -Eo '0x[a-z0-9]+'\`"
 ```
 
-
-<a name="section33"></a>
-## Tune initial window size
-As mentioned in Google's research https://research.google/pubs/pub36640/ it is usefull to increase intial window size to at least 10. Improves latency ant throughput.
-
-Copy this in /etc/rc.local:
-``` 
-defrt=`ip route | grep "^default" | head -1`
-ip route change $defrt initcwnd 10
-```
