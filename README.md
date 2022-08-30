@@ -146,55 +146,59 @@ I have tuned MySQL server with this tool https://raw.githubusercontent.com/major
 
 ```
 [mysqld_safe]
-socket = /var/run/mysqld/mysqld.sock
-nice = 0
+socket=/var/run/mysqld/mysqld.sock
+nice=0
 
 [mysqld]
-open_files_limit = 8000
-user = mysql
-pid-file = /var/run/mysqld/mysqld.pid
-#socket = /var/run/mysqld/mysqld.sock
-port = 3306
-basedir = /usr
-datadir = /var/lib/mysql
-tmpdir = /tmp
-lc-messages-dir = /usr/share/mysql
+open_files_limit=8000
+user=mysql
+pid-file=/var/run/mysqld/mysqld.pid
+#socket=/var/run/mysqld/mysqld.sock
+port=3306
+basedir=/usr
+datadir=/var/lib/mysql
+tmpdir=/tmp
+lc-messages-dir=/usr/share/mysql
 
 skip-external-locking
-skip-name-resolve
+skip-name-resolve=1
 skip-host-cache
 
-bind-address = 127.0.0.1
-character-set-server = utf8
-init-connect = 'SET NAMES utf8'
-max_connections = 1000
-connect_timeout = 10
-default-storage-engine = InnoDB
-interactive_timeout = 120
+bind-address=127.0.0.1
+character-set-server=utf8
+init-connect='SET NAMES utf8'
+max_connections=1000
+connect_timeout=10
+default-storage-engine=InnoDB
+interactive_timeout=120
 
-key_buffer_size = 16M
-max_allowed_packet = 16M
-thread_stack = 192K
-thread_cache_size = 8
+key_buffer_size=24M
+max_allowed_packet=256M
+thread_stack=192K
+thread_cache_size=100
 
-myisam_recover_options  = BACKUP
+myisam_recover_options=BACKUP
 
-log_error = /var/log/mysql/error.log
-expire_logs_days = 10
-max_binlog_size = 100M
+log_error=/var/log/mysql/error.log
+expire_logs_days=10
+#max_binlog_size=100M
 
-innodb_file_per_table
-
+innodb_file_per_table=1
+innodb_flush_method=O_DIRECT
 innodb_buffer_pool_size=1G
-innodb_log_file_size=512M
+innodb_log_file_size=256M
+innodb_log_buffer_size=16M
 innodb_buffer_pool_instances=2
+innodb_redo_log_capacity=268435456
 
-innodb_write_io_threads = 8
-innodb_read_io_threads = 8
-innodb_thread_concurrency = 8
-innodb_flush_log_at_trx_commit = 5
-innodb_log_buffer_size = 8M
-sync_binlog = 5
+innodb_write_io_threads=64
+innodb_read_io_threads=64
+innodb_thread_concurrency=8
+innodb_io_capacity=10000
+innodb_io_capacity_max=20000
+
+innodb_flush_log_at_trx_commit=2
+sync_binlog=1
 ```
 
 
